@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 
-// Este archivo lo crea build_runner automáticamente (paso 3.3).
+// Este archivo lo crea build_runner automáticamente.
 part 'database.g.dart';
 
 /// Tabla "tareas" en SQLite.
@@ -20,7 +20,7 @@ class Tareas extends Table {
 @DriftDatabase(tables: [Tareas])
 class AppDatabase extends _$AppDatabase {
   // Si no le pasan una conexión, abre la base real del dispositivo.
-  // En las pruebas automáticas le pasaremos una base en memoria.
+  // En las pruebas automáticas le pasamos una base en memoria.
   AppDatabase([QueryExecutor? conexion]) : super(conexion ?? _abrirConexion());
 
   @override
@@ -29,7 +29,7 @@ class AppDatabase extends _$AppDatabase {
   static QueryExecutor _abrirConexion() {
     return driftDatabase(
       name: 'gestor_tareas',
-      // Archivos que necesita la versión web (los agregaremos en el paso 4)
+      // Archivos que necesita la versión web (están en la carpeta web/)
       web: DriftWebOptions(
         sqlite3Wasm: Uri.parse('sqlite3.wasm'),
         driftWorker: Uri.parse('drift_worker.js'),
@@ -49,5 +49,28 @@ class AppDatabase extends _$AppDatabase {
       throw ArgumentError('El título no puede estar vacío');
     }
     return into(tareas).insert(TareasCompanion.insert(titulo: limpio));
+  }
+
+  /// UPDATE: cambia el título de la tarea con ese id.
+  Future<void> editarTitulo(int id, String nuevoTitulo) async {
+    final limpio = nuevoTitulo.trim();
+    if (limpio.isEmpty) {
+      throw ArgumentError('El título no puede estar vacío');
+    }
+    await (update(tareas)..where((t) => t.id.equals(id))).write(
+      TareasCompanion(titulo: Value(limpio)),
+    );
+  }
+
+  /// UPDATE: marca la tarea como completada o pendiente.
+  Future<void> cambiarEstado(int id, bool completada) async {
+    await (update(tareas)..where((t) => t.id.equals(id))).write(
+      TareasCompanion(completada: Value(completada)),
+    );
+  }
+
+  /// DELETE: borra la tarea con ese id.
+  Future<void> eliminarTarea(int id) async {
+    await (delete(tareas)..where((t) => t.id.equals(id))).go();
   }
 }

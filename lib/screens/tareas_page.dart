@@ -38,16 +38,41 @@ class _TareasPageState extends State<TareasPage> {
     }
   }
 
-  void _alternarCompletada(Tarea tarea, bool completada) {
-    _mostrarMensaje('Implementar actualización de tarea');
+  Future<void> _alternarCompletada(Tarea tarea, bool completada) async {
+    try {
+      await widget.db.cambiarEstado(tarea.id, completada);
+    } catch (e) {
+      _mostrarMensaje('No se pudo actualizar la tarea: $e');
+    }
   }
 
-  void _editarTarea(Tarea tarea) {
-    _mostrarMensaje('Implementar edición de título');
+  Future<void> _editarTarea(Tarea tarea) async {
+    // Abre una ventanita con el título actual. Devuelve el texto nuevo,
+    // o null si la persona presionó "Cancelar".
+    final nuevoTitulo = await showDialog<String>(
+      context: context,
+      builder: (context) => _DialogoEditar(tituloActual: tarea.titulo),
+    );
+    if (nuevoTitulo == null) return;
+
+    if (nuevoTitulo.trim().isEmpty) {
+      _mostrarMensaje('El título no puede quedar vacío');
+      return;
+    }
+    try {
+      await widget.db.editarTitulo(tarea.id, nuevoTitulo);
+    } catch (e) {
+      _mostrarMensaje('No se pudo editar la tarea: $e');
+    }
   }
 
-  void _eliminarTarea(Tarea tarea) {
-    _mostrarMensaje('Implementar eliminación de tarea');
+  Future<void> _eliminarTarea(Tarea tarea) async {
+    try {
+      await widget.db.eliminarTarea(tarea.id);
+      _mostrarMensaje('Tarea eliminada');
+    } catch (e) {
+      _mostrarMensaje('No se pudo eliminar la tarea: $e');
+    }
   }
 
   void _mostrarMensaje(String mensaje) {
@@ -122,7 +147,10 @@ class _TareasPageState extends State<TareasPage> {
                             },
                           ),
                           title: Text(tarea.titulo),
-                          subtitle: Text('ID: ${tarea.id}'),
+                          subtitle: Text(
+                            'ID: ${tarea.id} · '
+                            '${tarea.completada ? 'Completada' : 'Pendiente'}',
+                          ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -148,6 +176,51 @@ class _TareasPageState extends State<TareasPage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Ventanita para editar el título de una tarea.
+/// Es un StatefulWidget para poder liberar (dispose) su controlador de texto.
+class _DialogoEditar extends StatefulWidget {
+  final String tituloActual;
+
+  const _DialogoEditar({required this.tituloActual});
+
+  @override
+  State<_DialogoEditar> createState() => _DialogoEditarState();
+}
+
+class _DialogoEditarState extends State<_DialogoEditar> {
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.tituloActual,
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Editar tarea'),
+      content: TextField(
+        controller: _controller,
+        autofocus: true,
+        decoration: const InputDecoration(labelText: 'Título'),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, _controller.text),
+          child: const Text('Guardar'),
+        ),
+      ],
     );
   }
 }
