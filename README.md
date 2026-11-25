@@ -21,10 +21,10 @@ la lista se vuelve a dibujar sola. El Stream se crea en `initState()`, no dentro
 
 ## Diseño de la tabla `tareas`
 
-| Columna      | Tipo en SQLite | Descripción                                   |
-|--------------|----------------|-----------------------------------------------|
-| `id`         | INTEGER        | Llave primaria, autoincremental.              |
-| `titulo`     | TEXT           | Título de la tarea. No puede estar vacío.     |
+| Columna      | Tipo en SQLite | Descripción                                    |
+|--------------|----------------|------------------------------------------------|
+| `id`         | INTEGER        | Llave primaria, autoincremental.               |
+| `titulo`     | TEXT           | Título de la tarea. No puede estar vacío.      |
 | `completada` | INTEGER (0/1)  | 0 = pendiente, 1 = completada (por defecto 0). |
 
 ## Estructura
@@ -95,6 +95,19 @@ flutter test
 | Plataforma | Estado |
 |---|---|
 | Web (Chrome) | Verificada |
-| Android | Pendiente de verificar |
+| Android | Verificada (celular físico por USB) |
 | macOS (escritorio) | Pendiente de verificar |
-| iOS, Windows, Linux |
+| iOS, Windows, Linux | Previstas (mismo código con drift_flutter), no verificadas |
+
+## Resultados de las pruebas manuales (P1–P6)
+
+Para "reiniciar" se cerró la app por completo y se volvió a abrir (no hot reload ni hot restart).
+
+| ID | Prueba | Web | Android |
+|----|--------|-----|---------|
+| P1 | Agregar 3 tareas, cerrar y abrir | ✓ | ✓ |
+| P2 | Marcar completada y reiniciar | ✓ | ✓ |
+| P3 | Cambiar título y reiniciar | ✓ | ✓ |
+| P4 | Eliminar y reiniciar | ✓ | ✓ |
+| P5 | Agregar título vacío | ✓ (no se registra) | ✓ (no se registra) |
+| P6 | Recargar y cerrar/abrir la pestaña | ✓ | No aplica |
