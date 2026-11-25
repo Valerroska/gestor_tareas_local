@@ -96,18 +96,18 @@ flutter test
 |---|---|
 | Web (Chrome) | Verificada |
 | Android | Verificada (celular físico por USB) |
-| macOS (escritorio) | Pendiente de verificar |
-| iOS, Windows, Linux | Previstas (mismo código con drift_flutter), no verificadas |
+| macOS (escritorio) | Verificada |
+| iOS, Windows, Linux | Previstas (mismo código con drift_flutter), no verificadas. iOS no se probó porque no se instaló el simulador. |
 
 ## Resultados de las pruebas manuales (P1–P6)
 
 Para "reiniciar" se cerró la app por completo y se volvió a abrir (no hot reload ni hot restart).
 
-| ID | Prueba | Web | Android |
-|----|--------|-----|---------|
-| P1 | Agregar 3 tareas, cerrar y abrir | ✓ | ✓ |
-| P2 | Marcar completada y reiniciar | ✓ | ✓ |
-| P3 | Cambiar título y reiniciar | ✓ | ✓ |
-| P4 | Eliminar y reiniciar | ✓ | ✓ |
-| P5 | Agregar título vacío | ✓ (no se registra) | ✓ (no se registra) |
-| P6 | Recargar y cerrar/abrir la pestaña | ✓ | No aplica |
+| ID | Prueba | Web | Android | macOS |
+|----|--------|-----|---------|-------|
+| P1 | Agregar 3 tareas, cerrar y abrir | ✓ | ✓ | ✓ |
+| P2 | Marcar completada y reiniciar | ✓ | ✓ | ✓ |
+| P3 | Cambiar título y reiniciar | ✓ | ✓ | ✓ |
+| P4 | Eliminar y reiniciar | ✓ | ✓ | ✓ |
+| P5 | Agregar título vacío | ✓ (no se registra) | ✓ (no se registra) | ✓ (no se registra) |
+| P6 | Recargar y cerrar/abrir la pestaña | ✓ | No aplica | No aplica |
